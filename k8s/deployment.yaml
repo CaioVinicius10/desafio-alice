@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: desafio-alice
-          image: REGION-docker.pkg.dev/PROJECT_ID/ARTIFACT_REGISTRY/desafio-alice:latest
+          image: 
           ports:
             - name: http
               containerPort: 8080
