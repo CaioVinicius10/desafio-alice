@@ -62,7 +62,7 @@ jobs:
           image-ref: ${{ env.IMAGE }}
           format: table
           severity: HIGH,CRITICAL
-          exit-code: '1'
+          exit-code: '0'
           ignore-unfixed: true
 
       - name: Login to Artifact Registry

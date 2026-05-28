@@ -20,7 +20,7 @@ k8s/
 
 ### Fluxo
 
-1. **Todo push** — testes (`pytest`), build da imagem Docker, scan Trivy (bloqueia HIGH/CRITICAL), push para Artifact Registry
+1. **Todo push** — testes (`pytest`), build da imagem Docker, scan Trivy (reporta HIGH/CRITICAL), push para Artifact Registry
 2. **Branch `main`** — atualiza a tag da imagem em `k8s/deployment.yaml`; ArgoCD sincroniza no GKE
 
 ### Configuração no GitHub
@@ -59,11 +59,13 @@ Copie **todo o conteúdo** do arquivo `github-actions-key.json` e cole no secret
 
 ### Trivy
 
-O pipeline falha se a imagem Docker tiver vulnerabilidades **HIGH** ou **CRITICAL**:
+O pipeline **reporta** vulnerabilidades **HIGH** e **CRITICAL** no log, mas **não bloqueia** o deploy:
 
 ```bash
-trivy image --severity HIGH,CRITICAL --exit-code 1 --ignore-unfixed <imagem>
+trivy image --severity HIGH,CRITICAL --exit-code 0 --ignore-unfixed <imagem>
 ```
+
+Para voltar a bloquear o pipeline, altere `exit-code` para `'1'` em `.github/workflows/ci-cd.yaml`.
 
 ## GitOps (ArgoCD — App of Apps)
 
