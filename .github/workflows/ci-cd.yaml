@@ -11,7 +11,7 @@ permissions:
 
 env:
   APP_NAME: desafio-alice
-  REGISTRY_HOST: ${{ vars.GCP_REGION }}-docker.pkg.dev
+  REGISTRY_HOST: ${{ secrets.GCP_REGION }}-docker.pkg.dev
 
 jobs:
   test:
@@ -49,7 +49,7 @@ jobs:
       - name: Set image tag
         id: image
         run: |
-          IMAGE="${{ env.REGISTRY_HOST }}/${{ vars.GCP_PROJECT_ID }}/${{ vars.GCP_ARTIFACT_REGISTRY }}/${{ env.APP_NAME }}:${{ github.sha }}"
+          IMAGE="${{ env.REGISTRY_HOST }}/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_ARTIFACT_REGISTRY }}/${{ env.APP_NAME }}:${{ github.sha }}"
           echo "image=${IMAGE}" >> "$GITHUB_OUTPUT"
           echo "IMAGE=${IMAGE}" >> "$GITHUB_ENV"
 

@@ -25,19 +25,14 @@ k8s/
 
 ### Configuração no GitHub
 
-**Variables** (`Settings → Secrets and variables → Actions → Variables`):
+Crie em **Settings → Secrets and variables → Actions → Secrets**:
 
-| Variable | Exemplo |
-|----------|---------|
-| `GCP_PROJECT_ID` | `meu-projeto-gcp` |
-| `GCP_REGION` | `southamerica-east1` |
-| `GCP_ARTIFACT_REGISTRY` | `desafio-alice` |
-
-**Secrets**:
-
-| Secret | Descrição |
-|--------|-----------|
-| `GCP_SA_KEY` | JSON completo da service account com permissão de push no Artifact Registry |
+| Secret | O que colocar | Exemplo |
+|--------|---------------|---------|
+| `GCP_PROJECT_ID` | ID do projeto GCP | `meu-projeto-gcp` |
+| `GCP_REGION` | Região do Artifact Registry | `southamerica-east1` |
+| `GCP_ARTIFACT_REGISTRY` | Nome do repositório Docker no AR | `desafio-alice` |
+| `GCP_SA_KEY` | JSON completo da service account | conteúdo do `.json` |
 
 A service account precisa da role `roles/artifactregistry.writer` no repositório de imagens.
 
