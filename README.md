@@ -2,6 +2,10 @@
 
 API Flask com CI/CD via GitHub Actions, scan de segurança com Trivy e deploy GitOps no GKE via ArgoCD.
 
+## Arquitetura
+
+![Arquitetura desafio-alice — Build, Deploy (GitOps tag) e Run](docs/architecture-diagram.png)
+
 ## Estrutura GitOps
 
 ```
