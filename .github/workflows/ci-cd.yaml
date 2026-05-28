@@ -92,7 +92,15 @@ jobs:
       - name: Update deployment image tag
         run: |
           SHORT_SHA="${{ needs.build-scan-push.outputs.short_sha }}"
-          sed -i "s|\(image: .*\):[^[:space:]]*|\1:${SHORT_SHA}|" k8s/deployment.yaml
+
+          if ! grep -qE '^[[:space:]]*image:[[:space:]]*.+:.+' k8s/deployment.yaml; then
+            echo "Erro: k8s/deployment.yaml precisa ter image completa com tag (ex.: registry/app:tag)"
+            exit 1
+          fi
+
+          sed -i "s|\(image:[[:space:]]*.*\):[^[:space:]]*$|\1:${SHORT_SHA}|" k8s/deployment.yaml
+          echo "Manifest atualizado:"
+          grep 'image:' k8s/deployment.yaml
 
       - name: Commit and push manifest
         run: |
