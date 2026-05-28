@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: desafio-alice
-          image: us-central1-docker.pkg.dev/app1-349916/desafio/desafio-alice:latest
+          image: 
           ports:
             - name: http
               containerPort: 8080
