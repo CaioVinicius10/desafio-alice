@@ -1,0 +1,22 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: monitoring-manifests
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/CaioVinicius10/desafio-alice.git
+    targetRevision: main
+    path: monitoring/manifests
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: desafio-alice
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: desafio-alice
+  namespace: desafio-alice
+  labels:
+    app.kubernetes.io/name: desafio-alice
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: desafio-alice
+  namespaceSelector:
+    matchNames:
+      - desafio-alice
+  endpoints:
+    # Requer endpoint /metrics na aplicação (ex.: prometheus-flask-exporter)
+    - port: http
+      path: /metrics
+      interval: 30s

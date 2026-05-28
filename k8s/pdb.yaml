@@ -1,0 +1,12 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: desafio-alice
+  namespace: desafio-alice
+  labels:
+    app.kubernetes.io/name: desafio-alice
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: desafio-alice

@@ -1,0 +1,137 @@
+# kube-prometheus-stack — values para desafio-alice
+# Chart: https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack
+# Instalado via ArgoCD: deploy/applications/monitoring.yaml
+
+fullnameOverride: monitoring
+
+defaultRules:
+  create: true
+  rules:
+    alertmanager: true
+    etcd: false
+    configReloaders: true
+    general: true
+    k8s: true
+    kubeApiserverAvailability: true
+    kubeApiserverSlos: true
+    kubeControllerManager: false
+    kubelet: true
+    kubeProxy: false
+    kubePrometheusGeneral: true
+    kubePrometheusNodeRecording: true
+    kubernetesApps: true
+    kubernetesResources: true
+    kubernetesStorage: true
+    kubernetesSystem: true
+    kubeSchedulerAlerting: false
+    kubeSchedulerRecording: false
+    kubeStateMetrics: true
+    network: true
+    node: true
+    nodeExporterAlerting: true
+    nodeExporterRecording: true
+    prometheus: true
+    prometheusOperator: true
+
+alertmanager:
+  enabled: true
+  alertmanagerSpec:
+    resources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        memory: 256Mi
+
+grafana:
+  enabled: true
+  defaultDashboardsEnabled: true
+  adminUser: admin
+  # Troque em produção: use grafana.admin.existingSecret
+  adminPassword: changeme
+  persistence:
+    enabled: false
+  sidecar:
+    dashboards:
+      enabled: true
+      searchNamespace: ALL
+    datasources:
+      enabled: true
+  additionalDataSources: []
+
+prometheus:
+  enabled: true
+  prometheusSpec:
+    retention: 7d
+    resources:
+      requests:
+        cpu: 200m
+        memory: 512Mi
+      limits:
+        cpu: 500m
+        memory: 1Gi
+    # Descobre ServiceMonitors/PrometheusRules em qualquer namespace
+    serviceMonitorSelectorNilUsesHelmValues: false
+    podMonitorSelectorNilUsesHelmValues: false
+    ruleSelectorNilUsesHelmValues: false
+
+kubeStateMetrics:
+  enabled: true
+
+nodeExporter:
+  enabled: true
+
+prometheusOperator:
+  enabled: true
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+
+# Alertas específicos da aplicação desafio-alice (via kube-state-metrics)
+additionalPrometheusRulesMap:
+  desafio-alice:
+    groups:
+      - name: desafio-alice
+        rules:
+          - alert: DesafioAliceUnavailable
+            expr: |
+              kube_deployment_status_replicas_available{
+                namespace="desafio-alice",
+                deployment="desafio-alice"
+              } < 1
+            for: 2m
+            labels:
+              severity: critical
+            annotations:
+              summary: desafio-alice indisponível
+              description: Deployment desafio-alice com menos de 1 réplica disponível.
+
+          - alert: DesafioAliceHighRestartRate
+            expr: |
+              increase(kube_pod_container_status_restarts_total{
+                namespace="desafio-alice",
+                container="desafio-alice"
+              }[15m]) > 3
+            for: 5m
+            labels:
+              severity: warning
+            annotations:
+              summary: desafio-alice reiniciando frequentemente
+              description: Mais de 3 restarts em 15 minutos.
+
+          - alert: DesafioAliceHPAMaxedOut
+            expr: |
+              kube_horizontalpodautoscaler_status_current_replicas{
+                namespace="desafio-alice",
+                horizontalpodautoscaler="desafio-alice"
+              } >= kube_horizontalpodautoscaler_spec_max_replicas{
+                namespace="desafio-alice",
+                horizontalpodautoscaler="desafio-alice"
+              }
+            for: 10m
+            labels:
+              severity: warning
+            annotations:
+              summary: HPA desafio-alice no limite máximo
+              description: HPA atingiu maxReplicas por 10 minutos.

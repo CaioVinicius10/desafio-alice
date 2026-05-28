@@ -9,11 +9,20 @@ deploy/
   bootstrap/
     platform-apps.yaml       # Application pai (bootstrap único)
   applications/
-    desafio-alice.yaml         # Application filha (gerenciada pelo Git)
+    desafio-alice.yaml       # Application filha (gerenciada pelo Git)
+    monitoring.yaml          # Prometheus + Grafana (Helm)
+    monitoring-manifests.yaml
+monitoring/
+  kube-prometheus-stack/
+    values.yaml
+  manifests/
+    servicemonitor-desafio-alice.yaml
 k8s/
   namespace.yaml
   deployment.yaml
   service.yaml
+  hpa.yaml
+  pdb.yaml
 ```
 
 ## CI/CD
@@ -110,3 +119,13 @@ docker run -p 8080:8080 desafio-alice
 ```
 
 Aplicação disponível em `http://localhost:8080/api/ping`.
+
+## Monitoramento (Prometheus + Grafana)
+
+Stack instalada via ArgoCD a partir de `monitoring/kube-prometheus-stack/values.yaml`.
+
+```bash
+kubectl port-forward svc/monitoring-grafana -n monitoring 3000:80
+```
+
+Detalhes, alertas e requisitos: [monitoring/README.md](monitoring/README.md).
